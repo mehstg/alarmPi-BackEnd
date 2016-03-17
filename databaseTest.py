@@ -3,4 +3,6 @@ from dbConnector import dbConnector
 
 db = dbConnector('alarmPi.db') 
 
-print db.setRecord()
+db.setRecord()
+
+print db.getRecords()

@@ -11,16 +11,27 @@ class dbConnector():
 	current_time = int(time.time())
 	insert = [(current_time, 'Arm'),]
 
-	output = c.execute('INSERT INTO Alarm_Events(datetime,state) VALUES (?,?)', (current_time, 'Arm'))
+	try:
+		output = c.execute('INSERT INTO Alarm_Events(datetime,state) VALUES (?,?)', (current_time, 'Arm'))
 
-	self.conn.commit()
-	c.close()
+	except Exception as e:
+		self.conn.rollback()
+    		raise e
+		return False
+
+	finally:
+		self.conn.commit()
+		c.close()
+		return True
 	
-	return output
 
+    def getRecords(self):
+	c = self.conn.cursor()
+	c.execute('SELECT * FROM Alarm_Events')
+	data = c.fetchall()
+	c.close()
 
-    def getRecord(self):
-	return true
+	return data
 
 
 
