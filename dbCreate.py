@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!env/bin/python
 
 #Build SQLite table for alarm logging
 

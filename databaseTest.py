@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!env/bin/python
 from dbConnector import dbConnector
 
 db = dbConnector('alarmPi.db') 
