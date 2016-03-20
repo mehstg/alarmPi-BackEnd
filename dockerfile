@@ -1,13 +1,10 @@
-#
-# Super simple example of a Dockerfile
-#
-FROM ubuntu:latest
-MAINTAINER Andrew Odewahn "odewahn@oreilly.com"
+FROM debian:latest
 
 RUN apt-get update
 RUN apt-get install -y python python-pip wget
 RUN pip install Flask
 
-COPY . /home
+RUN mkdir /opt/alarmPi
+COPY . /opt/alarmPi
 
-WORKDIR /home
+WORKDIR /opt/alarmPi
