@@ -8,3 +8,4 @@ RUN mkdir /opt/alarmPi
 COPY . /opt/alarmPi
 
 WORKDIR /opt/alarmPi
+ENTRYPOINT python flaskServer.py
