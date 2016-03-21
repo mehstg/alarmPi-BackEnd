@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!env/bin/python
 import sqlite3, os, time, logging
 
 class dbConnector():
