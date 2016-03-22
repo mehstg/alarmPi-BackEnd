@@ -6,30 +6,43 @@ class dbConnector():
         self.conn = sqlite3.connect(dbName)
 	logging.debug("Connecting to database")
 
+    availableStates = ['arm', 'disarm', 'triggered', 'reset']
 
     def setState(self, state):
 	c = self.conn.cursor()
         logging.debug("SetState opening Sqlite cursor")
 
-	#List of valid states - If state matches add record to db, otherwise fail.      
-        availableStates = ['arm', 'disarm', 'triggered', 'reset']
+	#Delete rows in Alarm_State
+	try:
+		drop = c.execute('DELETE FROM Alarm_State')
+		logging.debug("Deleting rows from Alarm_State")
+	except Exception as d:
+		logging.error("Unable to delete rows from Alarm_State")
+		self.conn.rollback()
+		raise d
+		return False
+	finally:
+		self.conn.commit()
+		c.close
+		logging.debug("Successfully deleted rows from Alarm_State")
 	
-	if state in availableStates:
+	
+	if state in self.availableStates:
 		try:
-                        output = c.execute('INSERT INTO Alarm_State(state) VALUES (?)', (state))
-                        logging.info("Inserting in to sqlite database")
-                except Exception as e:
-                        logging.error("Error inserting in to SQLite database, rolling back")
+			output = c.execute('INSERT INTO Alarm_State(currentstate) VALUES (?)', (str(state),))
+                	logging.info("Inserting in to sqlite database")
+                
+		except Exception as e:
+                      	logging.error("Error inserting in to SQLite database, rolling back")
                         self.conn.rollback()
                         raise e
-			logging.error(e)	
                         return False
 
-                finally:
-                        self.conn.commit()
-                        c.close()
-                        logging.debug("Closing connection to SQLite database")
-                        return True
+		finally:
+			self.conn.commit()
+                	c.close()
+                	logging.debug("Closing connection to SQLite database")
+                	return True
         else:
 		logging.error("State does not match list of available.")
                 return False
@@ -50,14 +63,12 @@ class dbConnector():
 	c = self.conn.cursor()
 	logging.debug("SetEvent opening Sqlite cursor")
 
-	#List of valid states - If state matches add record to db, otherwise fail.	
-	availableStates = ['arm', 'disarm', 'triggered', 'reset']
 
-	if state in availableStates:
+	if state in self.availableStates:
 		current_time = int(time.time())
 
 		try:
-			output = c.execute('INSERT INTO Alarm_Events(datetime,state) VALUES (?,?)', (current_time, state))
+			output = c.execute('INSERT INTO Alarm_Events(datetime,state) VALUES (?,?)', (int(current_time), str(state)))
 			logging.info("Inserting in to sqlite database")
 
 		except Exception as e:
