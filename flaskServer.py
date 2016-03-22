@@ -1,13 +1,34 @@
 #!env/bin/python
-from flask import Flask, jsonify
+import flask, time
+from dbConnector import dbConnector
 
-app = Flask(__name__)
 
-state = {u'IsArmed': False, u'Log': [{u'Date': u'20/01/2015', u'StateChange': u'Disarmed', u'Time': u'01:50'}, {u'Date': u'20/01/2015', u'StateChange': u'Armed', u'Time': u'07:50'}], u'Title': u'WansbeckAlarm'}
+app =flask.Flask(__name__)
+db = dbConnector('alarmPi.db')
+
+records = db.getAllEvents()
+currentstates = db.getState()
+
+alarmlog = []
+for record in records:
+    dt = time.strftime("%d-%m-%Y", time.gmtime(record[1]))
+    tm = time.strftime("%H:%M:%S", time.gmtime(record[1]))
+    alarmlog.append({u'Date': dt,  u'Time': tm, u'StateChange': record[2]})
+
+for s in currentstates:
+    currentstate = s
+
+if str(currentstate[1]) == 'arm':
+	IsArmed = True
+else:
+	IsArmed = False
+
+state = {u'IsArmed': IsArmed, u'Log': alarmlog, u'Title': u'Wansbeck Alarm Panel'}
+
 
 @app.route('/api/v1.0/getState', methods=['GET'])
-def get_tasks():
-    return jsonify(state)
+def get_state():
+    return flask.jsonify(state)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
