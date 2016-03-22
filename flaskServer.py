@@ -25,10 +25,27 @@ else:
 
 state = {u'IsArmed': IsArmed, u'Log': alarmlog, u'Title': u'Wansbeck Alarm Panel'}
 
+def updateState(update):
+    if db.setEvent(str(update)):
+    	if db.setState(str(update)):
+	    return True
+	else:
+	    return False
+    else:
+	return False
+
 
 @app.route('/api/v1.0/getState', methods=['GET'])
 def get_state():
     return flask.jsonify(state)
+
+@app.route('/api/v1.0/setState', methods=['POST'])
+def set_state():
+    update = app.request.args.get("update")
+    if updateState(update):
+	return 'State updated OK'
+    else:
+	abort(503)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

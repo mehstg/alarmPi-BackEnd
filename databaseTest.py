@@ -23,5 +23,5 @@ for record in records:
 
 
 db.setState('arm')
-
+print records
 print db.getState()
