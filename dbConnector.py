@@ -6,9 +6,49 @@ class dbConnector():
         self.conn = sqlite3.connect(dbName)
 	logging.debug("Connecting to database")
 
-    def setRecord(self, state):
+
+    def setState(self, state):
 	c = self.conn.cursor()
-	logging.debug("SetRecord opening Sqlite cursor")
+        logging.debug("SetState opening Sqlite cursor")
+
+	#List of valid states - If state matches add record to db, otherwise fail.      
+        availableStates = ['arm', 'disarm', 'triggered', 'reset']
+	
+	if state in availableStates:
+		try:
+                        output = c.execute('INSERT INTO Alarm_State(state) VALUES (?)', (state))
+                        logging.info("Inserting in to sqlite database")
+                except Exception as e:
+                        logging.error("Error inserting in to SQLite database, rolling back")
+                        self.conn.rollback()
+                        raise e
+			logging.error(e)	
+                        return False
+
+                finally:
+                        self.conn.commit()
+                        c.close()
+                        logging.debug("Closing connection to SQLite database")
+                        return True
+        else:
+		logging.error("State does not match list of available.")
+                return False
+
+
+
+    def getState(self):
+        c = self.conn.cursor()
+        c.execute('SELECT * FROM Alarm_State')
+        logging.info("Selecting state records from SQLite database")
+        data = c.fetchall()
+        c.close()
+
+        return data
+	
+
+    def setEvent(self, state):
+	c = self.conn.cursor()
+	logging.debug("SetEvent opening Sqlite cursor")
 
 	#List of valid states - If state matches add record to db, otherwise fail.	
 	availableStates = ['arm', 'disarm', 'triggered', 'reset']
@@ -32,13 +72,13 @@ class dbConnector():
 			logging.debug("Closing connection to SQLite database")
 			return True
 	else:
-		return False
+			logging.error("State does not match list of available.")
+			return False
 	
-    
-    def getAllRecords(self):
+    def getAllEvents(self):
 	c = self.conn.cursor()
         c.execute('SELECT * FROM Alarm_Events')
-	logging.info("Selecting all records from SQLite database")
+	logging.info("Selecting event records from SQLite database")
         data = c.fetchall()
         c.close()
 
