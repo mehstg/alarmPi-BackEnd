@@ -22,6 +22,6 @@ for record in records:
 
 
 
-db.setState('disarm')
+db.setState('arm')
 
 print db.getState()
