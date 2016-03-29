@@ -3,7 +3,7 @@ import sqlite3, os, time, logging
 
 class dbConnector():
     def __init__(self, dbName):
-        self.conn = sqlite3.connect(dbName)
+        self.conn = sqlite3.connect(dbName, check_same_thread = False)
 	logging.debug("Connecting to database")
 
     availableStates = ['arm', 'disarm', 'triggered', 'reset']
@@ -30,7 +30,7 @@ class dbConnector():
 	if state in self.availableStates:
 		try:
 			output = c.execute('INSERT INTO Alarm_State(currentstate) VALUES (?)', (str(state),))
-                	logging.info("Inserting in to sqlite database")
+                	logging.info("Inserting in to Alarm_State table")
                 
 		except Exception as e:
                       	logging.error("Error inserting in to SQLite database, rolling back")
@@ -69,7 +69,7 @@ class dbConnector():
 
 		try:
 			output = c.execute('INSERT INTO Alarm_Events(datetime,state) VALUES (?,?)', (int(current_time), str(state)))
-			logging.info("Inserting in to sqlite database")
+			logging.info("Inserting in to Alarm_Events table")
 
 		except Exception as e:
 			logging.error("Error inserting in to SQLite database, rolling back")
