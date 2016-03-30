@@ -1,5 +1,5 @@
 #!env/bin/python
-import flask, time, logging, sys
+import flask, time, logging, sys, pytz
 import dbConnector, notifyProwl
 
 # Properties file in gitignore - Needs creating if it does not exist
@@ -18,7 +18,7 @@ def getState():
     alarmlog = []
     for record in records:
     	dt = time.strftime("%d-%m-%Y", time.gmtime(record[1]))
-    	tm = time.strftime("%H:%M:%S", time.gmtime(record[1]))
+    	tm = time.strftime("%H:%M:%S", pytz.utc.localize(time.gmtime(record[1]), is_dst=None).astimezone(timezone))
     	alarmlog.append({u'Date': dt,  u'Time': tm, u'StateChange': record[2]})
 
     for s in currentstates:
