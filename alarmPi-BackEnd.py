@@ -1,11 +1,15 @@
 #!env/bin/python
 import flask, time, logging, sys
-from dbConnector import dbConnector
+import dbConnector, notifyProwl
+
+# Properties file in gitignore - Needs creating if it does not exist
+import properties
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 app =flask.Flask(__name__)
-db = dbConnector('alarmPi.db')
+db = dbConnector.dbConnector('alarmPi.db')
+notification = notifyProwl.notifyProwl(properties.prowlAPIKey)
 
 def getState():
     records = db.getAllEvents()
@@ -49,6 +53,7 @@ def set_state():
     	flask.abort(400)
 
     if updateState(flask.request.json['state']):
+	notification.notify(flask.request.json['state'])
 	return 'State updated OK'
     else:
 	flask.abort(503)
