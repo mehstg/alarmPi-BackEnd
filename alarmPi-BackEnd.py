@@ -17,8 +17,8 @@ def getState():
 
     alarmlog = []
     for record in records:
-    	dt = time.strftime("%d-%m-%Y", time.gmtime(record[1]))
-    	tm = time.strftime("%H:%M:%S", pytz.utc.localize(time.gmtime(record[1]), is_dst=None).astimezone(timezone))
+    	dt = time.strftime("%d-%m-%Y", time.localtime(record[1]))
+    	tm = time.strftime("%H:%M:%S", time.localtime(record[1]))
     	alarmlog.append({u'Date': dt,  u'Time': tm, u'StateChange': record[2]})
 
     for s in currentstates:
