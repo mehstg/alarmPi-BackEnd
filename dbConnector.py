@@ -88,7 +88,7 @@ class dbConnector():
 	
     def getAllEvents(self):
 	c = self.conn.cursor()
-        c.execute('SELECT * FROM Alarm_Events')
+        c.execute('SELECT * FROM Alarm_Events ORDER BY datetime DESC')
 	logging.info("Selecting event records from SQLite database")
         data = c.fetchall()
         c.close()
