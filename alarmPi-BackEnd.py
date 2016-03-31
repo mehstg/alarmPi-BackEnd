@@ -1,5 +1,5 @@
 #!env/bin/python
-import flask, time, logging, sys, pytz
+import flask, time, logging, sys
 import dbConnector, notifyProwl
 
 # Properties file in gitignore - Needs creating if it does not exist
