@@ -5,7 +5,7 @@ class notifyProwl():
     def __init__(self,apikey):
     	self.apikey = apikey
     
-    availableStates = ['arm', 'disarm', 'triggered', 'reset']
+    availableStates = ['arm', 'disarm', 'triggered', 'reset', 'confirmed']
 
 
     def notify(self, state):
@@ -22,6 +22,9 @@ class notifyProwl():
 		elif state == 'reset':
 			self._pushMessage('0','Wansbeck Alarm','Alarm Status','Alarm Reset')
 			logging.debug("Alarm reset notification")
+		elif state == 'confirmed':
+                        self._pushMessage('2','Wansbeck Alarm','Alarm Status','Alarm Confirmed')
+                        logging.debug("Alarm reset notification")
 
     # Private method to actually send message
     def _pushMessage(self,priority,application,event,description):

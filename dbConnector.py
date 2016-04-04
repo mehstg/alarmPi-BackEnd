@@ -6,7 +6,7 @@ class dbConnector():
         self.conn = sqlite3.connect(dbName, check_same_thread = False)
 	logging.debug("Connecting to database")
 
-    availableStates = ['arm', 'disarm', 'triggered', 'reset']
+    availableStates = ['arm', 'disarm', 'triggered', 'reset', 'confirmed']
 
     def setState(self, state):
 	c = self.conn.cursor()
